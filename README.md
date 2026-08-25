@@ -89,6 +89,8 @@ https://optoelectronics.liteon.com/upload/download/DS86-2015-0004/LTR-390UV_Fina
 
 ADAFRUIT LTR390 BREAKOUT BOARD \
 https://learn.adafruit.com/adafruit-ltr390-uv-sensor
+
+ADAFRUIT LTR390 LIBRARY, for reference \
 https://github.com/adafruit/Adafruit_LTR390
 
 ## Revision History
@@ -101,5 +103,6 @@ https://github.com/adafruit/Adafruit_LTR390
 
 ## Question of the Week
 
-Does darkness travel faster than light?
+_Does darkness travel faster than light?_
+
 
