@@ -97,7 +97,7 @@ https://github.com/adafruit/Adafruit_LTR390
 
 | Date  | Revision | Description |
 |:---------- |:---------|:----------- |
-| 2026.08.25 | 0.0.0	| Preliminary |
+| 2026.08.25 | 1.0.0	| First release |
 
 <br/>
 
