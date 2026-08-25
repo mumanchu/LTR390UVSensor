@@ -82,78 +82,76 @@ void loop()
 	// scheduler
 	ulong t = millis();
 	static ulong t1 = 0;
-	if (1) {//t - t1 > 10) {
+	if (t - t1 > 100) {
 		t1 = t;
 
 		// flash the LED so we know it's running
 		digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+	}
 
-		// if a new reading is ready, read it
-		bool dataReady;
-		uvSensor.getStatus(&dataReady);
-		if (dataReady) {
-			ulong v;
-			char buf[64];
+	// if a new reading is ready, read it
+	bool dataReady;
+	uvSensor.getStatus(&dataReady);
+	if (dataReady) {
+		ulong v;
+		char buf[64];
 
-			LTR390UVSensor::CHANNEL channel;
-			uvSensor.getChannel(&channel);
+		LTR390UVSensor::CHANNEL channel;
+		uvSensor.getChannel(&channel);
 			
-			// ambient light sensor is active
-			if (channel == uvSensor.ALS) {
-				uvSensor.getReading(uvSensor.ALS, &v);
-				float lux = uvSensor.calculateLuxF(v);
+		// ambient light sensor is active
+		if (channel == uvSensor.ALS) {
+			uvSensor.getReading(uvSensor.ALS, &v);
+			float lux = uvSensor.calculateLuxF(v);
 				
-				ulong luxI = uvSensor.calculateLuxI(v);
-				Serial.printf("luxI=%lu\n\r", luxI);
+			ulong luxI = uvSensor.calculateLuxI(v);
+			Serial.printf("luxI=%lu\n\r", luxI);
 
-				sprintf(buf, "luxF=%.02f\tv=%lu (%08lX)", lux, v, v);
-			}
+			sprintf(buf, "luxF=%.02f\tv=%lu (%08lX)", lux, v, v);
+		}
 
-			// UV sensor is active
-			else if (channel == uvSensor.UVS) {
-				uvSensor.getReading(uvSensor.UVS, &v);
-				uint uvi = uvSensor.calculateUVIndexF(v);
+		// UV sensor is active
+		else if (channel == uvSensor.UVS) {
+			uvSensor.getReading(uvSensor.UVS, &v);
+			uint uvi = uvSensor.calculateUVIndexF(v);
 
-				uint uviI = uvSensor.calculateUVIndexI(v);
-				Serial.printf("uviI=%lu\n\r", uviI);
+			uint uviI = uvSensor.calculateUVIndexI(v);
+			Serial.printf("uviI=%lu\n\r", uviI);
 
-				sprintf(buf, "uviF=%u\tv=%lu", uvi, v);
-			}
-			Serial.println(buf);
-			Serial.flush();
+			sprintf(buf, "uviF=%u\tv=%lu", uvi, v);
+		}
+		Serial.println(buf);
+		Serial.flush();
 
-			// step through the settings
-			// TODO edit as appropriate 
-			// >>>>
-			readings = 0;
-			Serial.println();
+		// step through the settings
+		// TODO edit as appropriate 
+		// >>>>
+		readings = 0;
+		Serial.println();
 
-			if (++gain > 4) {
-				gain = 0;
-				if (++resolution > 4) 
-					resolution = 0;
-
-			}
-
-			//if (++sampleRate > 5) {
-			//	sampleRate = 0;
-
-			//	if (++gain > 4)
-			//		gain = 0;
-			//}
-
-			//if (++gain > 4)
-			//	gain = 0;
-
-			// <<<<
-
-			Serial.printf("resolution = %u\r\n", resolution);
-			Serial.printf("sampleRate = %u\r\n", sampleRate);
-			Serial.printf("gain = %u\r\n", gain);
-			Serial.flush();
-
-			uvSensor.setConfiguration(resolution, sampleRate, gain);
+		if (++gain > 4) {
+			gain = 0;
+			if (++resolution > 4) 
+				resolution = 0;
 
 		}
+		//if (++sampleRate > 5) {
+		//	sampleRate = 0;
+
+		//	if (++gain > 4)
+		//		gain = 0;
+		//}
+
+		//if (++gain > 4)
+		//	gain = 0;
+
+		// <<<<
+
+		Serial.printf("resolution = %u\r\n", resolution);
+		Serial.printf("sampleRate = %u\r\n", sampleRate);
+		Serial.printf("gain = %u\r\n", gain);
+		Serial.flush();
+
+		uvSensor.setConfiguration(resolution, sampleRate, gain);
 	}
 }
