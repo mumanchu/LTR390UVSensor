@@ -3,7 +3,7 @@
 ///////////////////////////////////////////////////////////////////////
 // LTR390 Ambient Light and UV Sensor with I2C Interface
 // 3.3V ONLY!
-// Copyright (C) muman.ch + github/mumanchu, 2026.08.24
+// Copyright (C) muman.ch + github/mumanchu, 2026.09.19
 // 
 /*
 Soldering the tiny ant-sized LTR390 chip is almost impossible, so the
@@ -356,7 +356,6 @@ float LTR390UVSensor::calculateLuxF(ulong alsReading)
 	// overflow, reduce the gain
 	if (alsReading >= maxReading)
 		return 999999.0f;
-
 	return alsReading * alsSensitivityF;
 }
 
@@ -372,11 +371,8 @@ uint LTR390UVSensor::calculateUVIndexF(ulong uvsReading)
 	// overflow, reduce the gain
 	if (uvsReading >= maxReading)
 		return 9999;
-
 	float uvi = uvsReading * uvsSensitivityF;
-	uvi += 0.5f;		// round up for uint return value
-	uint uviI = (uint)uvi;
-	return uviI == 0 ? 1 : uviI;
+	return (uint)(uvi + 0.5f);		// round up for uint return value
 }
 #endif
 
@@ -415,10 +411,9 @@ uint LTR390UVSensor::calculateUVIndexI(ulong uvsReading)
 	// overflow, reduce the gain
 	if (uvsReading >= maxReading)
 		return 9999;
-
 	// round up with '+ (uvsSensitivityI >> 1)'
 	uint uviI = ((uvsReading * wfacI) + (uvsSensitivityI >> 1)) / uvsSensitivityI;
-	return uviI == 0 ? 1 : uviI;
+	return uviI;
 }
 #endif
 
