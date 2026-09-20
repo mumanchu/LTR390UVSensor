@@ -3,7 +3,7 @@
 ///////////////////////////////////////////////////////////////////////
 // LTR390 Ambient Light and UV Sensor with I2C Interface
 // 3.3V ONLY!
-// Copyright (C) muman.ch + github/mumanchu, 2026.09.19
+// Copyright (C) muman.ch + github/mumanchu, 2026.09.20
 // 
 /*
 Soldering the tiny ant-sized LTR390 chip is almost impossible, so the
@@ -360,6 +360,7 @@ float LTR390UVSensor::calculateLuxF(ulong alsReading)
 }
 
 // UV Index Calculation
+// 0        None, safe for vampires
 // 1..2     Low
 // 3..5     Moderate
 // 6..7     High
@@ -400,6 +401,7 @@ ulong LTR390UVSensor::calculateLuxI(ulong alsReading)
 }
 
 // UV Index Calculation
+// 0        None, safe for vampires
 // 1..2     Low
 // 3..5     Moderate
 // 6..7     High
