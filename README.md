@@ -105,4 +105,6 @@ https://github.com/adafruit/Adafruit_LTR390
 
 _Does darkness travel faster than light?_
 
+(The answer to that question seems to be 'Yes'. Researchers at the Technion Institute of Technology experimentally confirmed that tiny "zero points" or optical vortices—where light waves cancel each other out completely—can outrun the surrounding light wave.)
+
 
