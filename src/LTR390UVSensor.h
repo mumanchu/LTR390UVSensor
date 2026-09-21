@@ -3,43 +3,43 @@
 ///////////////////////////////////////////////////////////////////////
 // LTR390 Ambient Light and UV Sensor with I2C Interface
 // 3.3V ONLY!
-// Copyright (C) muman.ch + github/mumanchu, 2026.09.20
+// Copyright (C) muman.ch + github/mumanchu, 2026.09.21
 // 
 /*
 Soldering the tiny ant-sized LTR390 chip is almost impossible, so the
 Adafruit breakout board was used.
 
-The Adafruit library does not contain the LUX and UV Index calculations, 
-and it requires the Adafruit BusIO library which makes the code much 
+The Adafruit library does not contain the LUX and UV Index calculations,
+and it requires the Adafruit BusIO library which makes the code much
 bigger.
 
-This stand-alone mumanchu class has integer and/or float for LUX and 
+This stand-alone mumanchu class has integer and/or float for LUX and
 UV Index calculations.
 
-The LTR390 has two sensors, an ambient light sensor (ALS) and a UV 
-sensor (UVS). Only one sensor can be active at a time, selected by 
+The LTR390 has two sensors, an ambient light sensor (ALS) and a UV
+sensor (UVS). Only one sensor can be active at a time, selected by
 setSensor().
 
-Use setConfiguration() to configure the sensor's resolution (in bits), 
-sample rate and the gain (1..18). For high LUX levels, a high gain 
-may cause overflow. Reduce the gain for high light levels, increase 
-the gain for low light levels. TODO: You could add an auto-gain-adjust 
+Use setConfiguration() to configure the sensor's resolution (in bits),
+sample rate and the gain (1..18). For high LUX levels, a high gain
+may cause overflow. Reduce the gain for high light levels, increase
+the gain for low light levels. TODO: You could add an auto-gain-adjust
 feature.
 
 Either floating point and/or integer calculations for the LUX and UV
-index can be done. Add '#define LTR390_FLOAT' or '%define LTR390_INT' 
-before #include "LTR390UVSensor.h" to select only float or only 
-integer calculations. Using floating point will increase the code size 
+index can be done. Add '#define LTR390_FLOAT' or '%define LTR390_INT'
+before #include "LTR390UVSensor.h" to select only float or only
+integer calculations. Using floating point will increase the code size
 if you are not using floats elsewhere.
 
-All methods return 'false' if [communications or validation] failed. 
+All methods return 'false' if [communications or validation] failed.
 Data is returned via parameter pointers.
 
-Note that the green Power LED on the Adafruit board can add a few LUX 
+Note that the green Power LED on the Adafruit board can add a few LUX
 to very low light readings, so stick some black tape over the Power LED.
 
-A nasty problem was found. The 'software reset' command hangs the I2C 
-bus (the LTR390 does not issue the I2C ACK). This is handled by special 
+A nasty problem was found. The 'software reset' command hangs the I2C
+bus (the LTR390 does not issue the I2C ACK). This is handled by special
 code in begin().
 
 LTR390 DATA SHEET
@@ -93,7 +93,8 @@ public:
 	ulong wfacI = 1000;
 	#endif
 
-	typedef enum {
+	typedef enum
+	{
 		ALS = 0,	// ambient light sensor channel
 		UVS = 1		// uv sensor channel
 	} CHANNEL;
@@ -104,16 +105,16 @@ public:
 	bool setConfiguration(uint resolution, uint sampleRate, uint gain);
 	bool getConfiguration(uint* resolution, uint* sampleRate, uint* gain);
 	bool configureIntPin(CHANNEL channel, uint persistence);
-	bool enableIntPin(bool enable);
+	bool enableIntPin(bool enable = true);
 	bool setIntPinThreshold(ulong upperThreshold, ulong lowerThreshold);
 	bool setChannel(CHANNEL channel);
 	bool getChannel(CHANNEL* channel);
-	bool enableSensor(bool enable);
+	bool enableSensor(bool enable = true);
 	bool getStatus(bool* dataReady, bool* intTriggered = NULL, bool* powerOn = NULL);
 	bool getReading(CHANNEL channel, ulong* reading);
 	#ifdef LTR390_FLOAT
 	float calculateLuxF(ulong alsReading);
-	uint calculateUVIndexF(ulong uvsReading);
+	float calculateUVIndexF(ulong uvsReading);
 	#endif
 	#ifdef LTR390_INT
 	ulong calculateLuxI(ulong alsReading);
@@ -221,12 +222,12 @@ bool LTR390UVSensor::configureIntPin(CHANNEL channel, uint persistence)
 {
 	intCfgRegShadow &= ~0x30;
 	intCfgRegShadow |= channel ? 0x30 : 0x10;
-	return writeRegister(0x19, intCfgRegShadow) && 
+	return writeRegister(0x19, intCfgRegShadow) &&
 		writeRegister(0x1a, (byte)(persistence << 4));
 }
 
 // Enables/disables the INT output
-bool LTR390UVSensor::enableIntPin(bool enable)
+bool LTR390UVSensor::enableIntPin(bool enable /*=true*/)
 {
 	if (enable)
 		intCfgRegShadow |= 0x04;
@@ -265,7 +266,7 @@ bool LTR390UVSensor::getChannel(CHANNEL* channel)
 
 // enable : 0=sensor in standby, 1=sensor active
 // after reset() the sensor is in standby
-bool LTR390UVSensor::enableSensor(bool enable)
+bool LTR390UVSensor::enableSensor(bool enable /*=true*/)
 {
 	if (enable)
 		mainCtrlRegShadow |= 0x02;
@@ -277,7 +278,7 @@ bool LTR390UVSensor::enableSensor(bool enable)
 // dataReady    : 0=old reading, 1=new reading ready
 // intTriggered : 0=not triggered, 1=triggered
 // powerOn      : 0=cleared when read, 1=power on has reset registers
-bool LTR390UVSensor::getStatus(bool* dataReady, bool* intTriggered /*=NULL*/, 
+bool LTR390UVSensor::getStatus(bool* dataReady, bool* intTriggered /*=NULL*/,
 	bool* powerOn /*=NULL*/)
 {
 	byte b;
@@ -367,13 +368,13 @@ float LTR390UVSensor::calculateLuxF(ulong alsReading)
 // 8..10    Very high
 // 11+      Extreme!
 // 9999     Overflow, reduce the gain
-uint LTR390UVSensor::calculateUVIndexF(ulong uvsReading)
+float LTR390UVSensor::calculateUVIndexF(ulong uvsReading)
 {
 	// overflow, reduce the gain
 	if (uvsReading >= maxReading)
 		return 9999;
 	float uvi = uvsReading * uvsSensitivityF;
-	return (uint)(uvi + 0.5f);		// round up for uint return value
+	return uvi;
 }
 #endif
 
@@ -454,4 +455,3 @@ bool LTR390UVSensor::readRegister(byte reg, byte* value)
 	}
 	return true;
 }
-
