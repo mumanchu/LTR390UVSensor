@@ -6,7 +6,7 @@ Soldering the tiny ant-sized LTR390 chip is almost impossible, so the Adafruit b
 
 The Adafruit library does not contain the LUX and UV Index calculations, and it requires the Adafruit BusIO library which makes the code much bigger.
 
-This stand-alone mumanchu class has integer and/or float for LUX and UV Index calculations.
+This stand-alone _mumanchu_ class has integer and/or float for LUX and UV Index calculations.
 
 The LTR390 has two sensors, an ambient light sensor (ALS) and a UV sensor (UVS). Only one sensor can be active at a time, selected by `setSensor()`.
 
